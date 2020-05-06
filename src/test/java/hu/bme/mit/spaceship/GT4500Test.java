@@ -50,4 +50,99 @@ public class GT4500Test {
     verify(ts2, times(1)).fire(anyInt());
   }
 
+  @Test
+  public void fireTorpedo_Single_Success_with_Emty_Secondary(){
+    // Arrange
+    when(ts1.fire(anyInt())).thenReturn(true);
+    when(ts2.fire(anyInt())).thenReturn(false);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result);
+    verify(ts1, times(1)).fire(anyInt());
+    verify(ts2, times(0)).fire(anyInt());
+  }
+
+  @Test
+  public void fireTorpedo_Single_Fail(){
+    // Arrange
+    when(ts1.fire(anyInt())).thenReturn(false);
+    when(ts2.fire(anyInt())).thenReturn(false);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(false, result);
+    verify(ts1, times(1)).fire(anyInt());
+    verify(ts2, times(0)).fire(anyInt());
+  }
+
+  @Test
+  public void fireTorpedo_Single_Fail_with_Working_Secondary(){
+    // Arrange
+    when(ts1.fire(anyInt())).thenReturn(false);
+    when(ts2.fire(anyInt())).thenReturn(true);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(false, result);
+    verify(ts1, times(1)).fire(anyInt());
+    verify(ts2, times(0)).fire(anyInt());
+  }
+
+  @Test
+  public void fireTorpedo_All_Fail_Both(){
+    // Arrange
+    when(ts1.fire(anyInt())).thenReturn(false);
+    when(ts2.fire(anyInt())).thenReturn(false);
+    when(ts1.isEmpty()).thenReturn(true);
+    when(ts2.isEmpty()).thenReturn(true);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    assertEquals(false, result);
+    verify(ts1, times(0)).fire(anyInt());
+    verify(ts2, times(0)).fire(anyInt());
+  }
+
+  @Test
+  public void fireTorpedo_All_Fail_One(){
+    // Arrange
+    when(ts1.fire(anyInt())).thenReturn(true);
+    when(ts2.fire(anyInt())).thenReturn(false);
+    when(ts1.isEmpty()).thenReturn(false);
+    when(ts2.isEmpty()).thenReturn(true);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    assertEquals(false, result);
+    verify(ts1, times(0)).fire(anyInt());
+    verify(ts2, times(0)).fire(anyInt());
+  }
+
+  @Test
+  public void fireTorpedo_All_Fail_Secondary(){
+    // Arrange
+    when(ts1.fire(anyInt())).thenReturn(false);
+    when(ts2.fire(anyInt())).thenReturn(true);
+    when(ts1.isEmpty()).thenReturn(true);
+    when(ts2.isEmpty()).thenReturn(false);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    assertEquals(true, result);
+    verify(ts1, times(0)).fire(anyInt());
+    verify(ts2, times(1)).fire(anyInt());
+  }
 }
